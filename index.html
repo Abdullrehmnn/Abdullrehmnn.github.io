@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abdul Rehman — AI Automation & Voice Agent Developer</title>
+<meta name="description" content="AI voice agents and n8n workflow automation for businesses that want to stop doing repetitive work by hand.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2314171C'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%233654FF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAF9;
+    --paper-alt:#F2F3F5;
+    --ink:#14171C;
+    --ink-soft:#5B6168;
+    --ink-faint:#9DA2A8;
+    --line:#E3E5E8;
+    --signal:#3654FF;
+    --signal-dim:#B9C3FF;
+    --signal-soft:#EEF1FF;
+    --radius:10px;
+    --maxw:1120px;
+    --serif-h1: clamp(2.4rem, 4.6vw + 1rem, 4.4rem);
+    --fs-h2: clamp(1.6rem, 2vw + 1rem, 2.2rem);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:1rem;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Sora',sans-serif;
+    margin:0;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  p{margin:0;}
+  a{color:inherit;text-decoration:none;}
+  .mono{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  img,svg{display:block;max-width:100%;}
+  .container{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding-inline:clamp(1.25rem,4vw,2.5rem);
+  }
+  :focus-visible{
+    outline:2px solid var(--signal);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(250,250,249,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-block:0.9rem;
+  }
+  .brand{
+    font-family:'Sora',sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+  }
+  .brand span{color:var(--signal);}
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:2rem;
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+  .nav-links a{
+    font-size:0.92rem;
+    color:var(--ink-soft);
+    transition:color .2s ease;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{display:flex;align-items:center;gap:1.5rem;}
+  .nav-toggle{display:none;}
+
+  @media (max-width:760px){
+    .nav-links{
+      position:fixed;
+      inset:60px 0 0 0;
+      background:var(--paper);
+      flex-direction:column;
+      align-items:flex-start;
+      gap:1.4rem;
+      padding:2rem 1.5rem;
+      transform:translateY(-12px);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease, transform .2s ease;
+    }
+    .nav-links.open{opacity:1;transform:translateY(0);pointer-events:auto;}
+    .nav-toggle{
+      display:inline-flex;
+      background:none;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:0.5rem 0.7rem;
+      font-family:'JetBrains Mono',monospace;
+      font-size:0.8rem;
+      cursor:pointer;
+    }
+    .nav-cta .btn-primary{display:none;}
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:0.92rem;
+    padding:0.75rem 1.3rem;
+    border-radius:var(--radius);
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .btn-primary{
+    background:var(--signal);
+    color:#fff;
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 24px -12px rgba(54,84,255,0.45);
+  }
+  .btn-ghost{
+    background:transparent;
+    border-color:var(--line);
+    color:var(--ink);
+  }
+  .btn-ghost:hover{border-color:var(--ink);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding-top:clamp(3.5rem,8vw,6rem);
+    padding-bottom:clamp(3rem,6vw,5rem);
+  }
+  .hero-graph{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:0;
+    pointer-events:none;
+    opacity:0.95;
+  }
+  .hero-graph .edge{
+    fill:none;
+    stroke-width:1.5;
+    stroke-linecap:round;
+    stroke-dasharray:100;
+    stroke-dashoffset:100;
+    opacity:0;
+    animation:edgeDraw 0.9s ease-out forwards;
+  }
+  .hero-graph .node{
+    transform-box:fill-box;
+    transform-origin:center;
+    transform:scale(0);
+    opacity:0;
+    animation:nodePop 0.55s cubic-bezier(.2,.9,.3,1.3) forwards;
+  }
+  @keyframes edgeDraw{
+    0%{stroke-dashoffset:100;stroke:var(--signal);opacity:0;}
+    8%{opacity:1;}
+    55%{stroke-dashoffset:0;stroke:var(--signal);opacity:1;}
+    100%{stroke-dashoffset:0;stroke:var(--line);opacity:1;}
+  }
+  @keyframes nodePop{
+    0%{transform:scale(0);opacity:0;fill:var(--signal);}
+    55%{transform:scale(1.2);opacity:1;fill:var(--signal);}
+    100%{transform:scale(1);opacity:1;fill:var(--ink-faint);}
+  }
+  .hero-content{position:relative;z-index:1;max-width:760px;}
+  .hero-content .mono{
+    color:var(--signal);
+    opacity:0;
+    transform:translateY(10px);
+    animation:contentIn 0.7s ease-out forwards;
+    animation-delay:1.45s;
+  }
+  .hero-content h1{
+    font-size:var(--serif-h1);
+    line-height:1.08;
+    margin-top:0.9rem;
+    opacity:0;
+    transform:translateY(10px);
+    animation:contentIn 0.7s ease-out forwards;
+    animation-delay:1.55s;
+  }
+  .hero-content .sub{
+    margin-top:1.4rem;
+    font-size:1.1rem;
+    color:var(--ink-soft);
+    max-width:540px;
+    opacity:0;
+    transform:translateY(10px);
+    animation:contentIn 0.7s ease-out forwards;
+    animation-delay:1.7s;
+  }
+  .hero-cta{
+    margin-top:2.1rem;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    flex-wrap:wrap;
+    opacity:0;
+    transform:translateY(10px);
+    animation:contentIn 0.7s ease-out forwards;
+    animation-delay:1.85s;
+  }
+  @keyframes contentIn{
+    to{opacity:1;transform:translateY(0);}
+  }
+  .status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    padding:0.45rem 0.8rem 0.45rem 0.6rem;
+    border:1px solid var(--line);
+    border-radius:999px;
+  }
+  .status-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:#34C77B;
+    animation:pulseDot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulseDot{
+    0%,100%{box-shadow:0 0 0 0 rgba(52,199,123,0.45);}
+    50%{box-shadow:0 0 0 5px rgba(52,199,123,0);}
+  }
+
+  /* ---------- reduced motion ---------- */
+  @media (prefers-reduced-motion:reduce){
+    .hero-graph .edge,.hero-graph .node,
+    .hero-content .mono,.hero-content h1,.hero-content .sub,.hero-cta{
+      animation:none !important;
+      opacity:1 !important;
+      transform:none !important;
+    }
+    .hero-graph .edge{stroke:var(--line) !important;stroke-dashoffset:0 !important;}
+    .hero-graph .node{fill:var(--ink-faint) !important;}
+    .status-dot{animation:none;}
+    .reveal{opacity:1 !important;transform:none !important;transition:none !important;}
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:clamp(3.5rem,7vw,6rem) 0;}
+  .section-alt{background:var(--paper-alt);}
+  .eyebrow{color:var(--signal);margin-bottom:0.8rem;display:block;}
+  .section-head{max-width:620px;margin-bottom:2.8rem;}
+  .section-head h2{font-size:var(--fs-h2);}
+  .section-head .sub{margin-top:0.8rem;color:var(--ink-soft);}
+
+  .reveal{
+    opacity:1;transform:none;
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  body.js-ready .reveal{opacity:0;transform:translateY(16px);}
+  body.js-ready .reveal.is-visible{opacity:1;transform:none;}
+
+  /* ---------- ABOUT / ROW ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:3rem;
+    align-items:start;
+  }
+  .about-grid p{color:var(--ink-soft);}
+  .about-grid p + p{margin-top:1rem;}
+  .stat-list{display:grid;gap:1.4rem;}
+  .stat{border-top:1px solid var(--line);padding-top:1rem;}
+  .stat .num{font-family:'Sora',sans-serif;font-weight:700;font-size:1.6rem;}
+  .stat .label{color:var(--ink-soft);font-size:0.9rem;margin-top:0.2rem;}
+  @media (max-width:780px){.about-grid{grid-template-columns:1fr;}}
+
+  /* ---------- SERVICES ---------- */
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1.5rem;
+  }
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.8rem;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    border-color:transparent;
+    box-shadow:0 18px 30px -20px rgba(20,23,28,0.18);
+  }
+  .card .tag{color:var(--signal);}
+  .card h3{font-size:1.15rem;margin-top:0.9rem;}
+  .card .desc{margin-top:0.7rem;color:var(--ink-soft);font-size:0.95rem;}
+  @media (max-width:880px){.card-grid{grid-template-columns:1fr;}}
+
+  /* ---------- PROCESS ---------- */
+  .process-list{position:relative;max-width:680px;}
+  .process-list::before{
+    content:"";
+    position:absolute;
+    left:23px;
+    top:6px;
+    bottom:6px;
+    width:1px;
+    background:var(--line);
+  }
+  .process-item{
+    position:relative;
+    display:flex;
+    gap:1.5rem;
+    padding-bottom:2.4rem;
+  }
+  .process-item:last-child{padding-bottom:0;}
+  .process-num{
+    flex:none;
+    width:48px;height:48px;
+    border-radius:50%;
+    background:var(--paper);
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.85rem;
+    color:var(--signal);
+    z-index:1;
+  }
+  .process-text h3{font-size:1.05rem;margin-bottom:0.4rem;}
+  .process-text p{color:var(--ink-soft);font-size:0.95rem;}
+
+  /* ---------- STACK ---------- */
+  .stack-group{margin-bottom:1.8rem;}
+  .stack-group:last-child{margin-bottom:0;}
+  .stack-group .mono{color:var(--ink-faint);margin-bottom:0.9rem;display:block;}
+  .pill-row{display:flex;flex-wrap:wrap;gap:0.6rem;}
+  .pill{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.82rem;
+    padding:0.5rem 0.9rem;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--paper);
+    color:var(--ink-soft);
+  }
+
+  /* ---------- WORK ---------- */
+  .work-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1.8rem;
+    background:var(--paper);
+    transition:transform .25s ease, box-shadow .25s ease;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+  .work-card:hover{transform:translateY(-4px);box-shadow:0 18px 30px -20px rgba(20,23,28,0.18);}
+  .work-card h3{font-size:1.1rem;margin-top:0.7rem;}
+  .work-card .desc{margin-top:0.7rem;color:var(--ink-soft);font-size:0.93rem;flex:1;}
+  .work-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:1.2rem;}
+  .work-tags span{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;
+    color:var(--ink-faint);
+    background:var(--paper-alt);
+    padding:0.25rem 0.55rem;
+    border-radius:6px;
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-box{
+    text-align:center;
+    max-width:680px;
+    margin:0 auto;
+  }
+  .contact-box h2{font-size:var(--fs-h2);}
+  .contact-box .sub{margin-top:0.9rem;color:var(--ink-soft);}
+  .contact-cta{
+    margin-top:2rem;
+    display:flex;
+    justify-content:center;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  .contact-links{
+    margin-top:2.5rem;
+    display:flex;
+    justify-content:center;
+    gap:1.6rem;
+    flex-wrap:wrap;
+  }
+  .contact-links a{
+    font-size:0.9rem;
+    color:var(--ink-soft);
+    border-bottom:1px solid transparent;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .contact-links a:hover{color:var(--ink);border-color:var(--ink);}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:2rem 0;
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:0.8rem;
+  }
+  .footer-inner p{font-size:0.82rem;color:var(--ink-faint);}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#top" class="brand">Abdul Rehman<span>.</span></a>
+    <nav>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">Menu</button>
+      <a href="#contact" class="btn btn-primary">Let's talk</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-graph" aria-hidden="true">
+      <svg viewBox="0 0 1200 220" width="100%" preserveAspectRatio="xMidYMid meet">
+        <path class="edge" pathLength="100" style="animation-delay:0.00s" d="M60,150 Q145,40 230,60"></path>
+        <path class="edge" pathLength="100" style="animation-delay:0.12s" d="M230,60 Q320,30 410,160"></path>
+        <path class="edge" pathLength="100" style="animation-delay:0.24s" d="M410,160 Q500,200 590,50"></path>
+        <path class="edge" pathLength="100" style="animation-delay:0.36s" d="M590,50 Q680,10 770,150"></path>
+        <path class="edge" pathLength="100" style="animation-delay:0.48s" d="M770,150 Q860,190 950,60"></path>
+        <path class="edge" pathLength="100" style="animation-delay:0.60s" d="M950,60 Q1045,20 1140,140"></path>
+        <path class="edge" pathLength="100" style="animation-delay:0.30s;opacity:0.6" d="M230,60 Q410,20 590,50"></path>
+        <path class="edge" pathLength="100" style="animation-delay:0.78s;opacity:0.6" d="M770,150 Q955,180 1140,140"></path>
+
+        <circle class="node" cx="60" cy="150" r="6" style="animation-delay:0.05s"></circle>
+        <circle class="node" cx="230" cy="60" r="6" style="animation-delay:0.25s"></circle>
+        <circle class="node" cx="410" cy="160" r="6" style="animation-delay:0.45s"></circle>
+        <circle class="node" cx="590" cy="50" r="6" style="animation-delay:0.65s"></circle>
+        <circle class="node" cx="770" cy="150" r="6" style="animation-delay:0.85s"></circle>
+        <circle class="node" cx="950" cy="60" r="6" style="animation-delay:1.0s"></circle>
+        <circle class="node" cx="1140" cy="140" r="6" style="animation-delay:1.15s"></circle>
+      </svg>
+    </div>
+
+    <div class="container hero-content">
+      <span class="mono eyebrow">AI Voice Agents &amp; Workflow Automation</span>
+      <h1>AI systems that answer calls, qualify leads, and automate the busywork.</h1>
+      <p class="sub">I design and build AI voice agents and n8n workflows for businesses that are done doing repetitive work by hand &mdash; based in Lahore, working with clients worldwide.</p>
+      <div class="hero-cta">
+        <a href="#work" class="btn btn-ghost">See the work</a>
+        <a href="#contact" class="btn btn-primary">Let's talk &rarr;</a>
+        <span class="status-pill"><span class="status-dot"></span>Available for new projects</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section>
+    <div class="container about-grid">
+      <div class="reveal">
+        <span class="mono eyebrow">About</span>
+        <p>I build the systems that sit between a lead showing up and your team actually talking to them &mdash; voice agents that pick up the phone, and n8n workflows that move data so nobody's copy-pasting between tabs.</p>
+        <p>Most of what I build runs on Vapi, Retell AI, and a self-hosted n8n instance, wired into whatever CRM or calendar a client already uses. The goal isn't to replace your stack &mdash; it's to make it run itself.</p>
+      </div>
+      <div class="stat-list reveal">
+        <div class="stat">
+          <div class="num">n8n</div>
+          <div class="label">Self-hosted instance, custom workflows built end-to-end</div>
+        </div>
+        <div class="stat">
+          <div class="num">Vapi / Retell</div>
+          <div class="label">Voice agents for inbound and outbound calling</div>
+        </div>
+        <div class="stat">
+          <div class="num">Remote</div>
+          <div class="label">Lahore-based, working with clients across time zones</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES ============ -->
+  <section id="services" class="section-alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="mono eyebrow">Services</span>
+        <h2>Three things I actually build</h2>
+        <p class="sub">No vague "AI consulting" &mdash; just the systems, scoped clearly.</p>
+      </div>
+      <div class="card-grid">
+        <div class="card reveal">
+          <span class="mono tag">Voice</span>
+          <h3>AI Voice Agents</h3>
+          <p class="desc">Inbound and outbound calling agents built on Vapi and Retell AI that answer questions, qualify leads, and book appointments &mdash; without sounding like a robot reading a script.</p>
+        </div>
+        <div class="card reveal">
+          <span class="mono tag">Automation</span>
+          <h3>n8n Workflow Automation</h3>
+          <p class="desc">Custom workflows that connect your CRM, calendar, and forms so leads, bookings, and follow-ups move on their own &mdash; no manual data entry.</p>
+        </div>
+        <div class="card reveal">
+          <span class="mono tag">Integration</span>
+          <h3>AI Agent Systems</h3>
+          <p class="desc">Multi-step agents wired into the tools you already run &mdash; GoHighLevel, HubSpot, Zoho, Google Sheets &mdash; so automation fits your stack instead of replacing it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROCESS ============ -->
+  <section id="process">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="mono eyebrow">Process</span>
+        <h2>How a project actually runs</h2>
+      </div>
+      <div class="process-list">
+        <div class="process-item reveal">
+          <div class="process-num">01</div>
+          <div class="process-text">
+            <h3>Discovery call</h3>
+            <p>We map what's manual today and where it's actually costing you time or leads.</p>
+          </div>
+        </div>
+        <div class="process-item reveal">
+          <div class="process-num">02</div>
+          <div class="process-text">
+            <h3>Build &amp; test</h3>
+            <p>I build the agent or workflow in a sandbox and run it against real scenarios before it touches a live lead.</p>
+          </div>
+        </div>
+        <div class="process-item reveal">
+          <div class="process-num">03</div>
+          <div class="process-text">
+            <h3>Deploy &amp; integrate</h3>
+            <p>It goes live inside your existing stack &mdash; CRM, calendar, phone numbers &mdash; with monitoring in place.</p>
+          </div>
+        </div>
+        <div class="process-item reveal">
+          <div class="process-num">04</div>
+          <div class="process-text">
+            <h3>Handover &amp; support</h3>
+            <p>You get documentation and a working system &mdash; not a black box you're stuck depending on me for.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STACK ============ -->
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="mono eyebrow">Stack</span>
+        <h2>What it's built on</h2>
+      </div>
+      <div class="reveal">
+        <div class="stack-group">
+          <span class="mono">Voice</span>
+          <div class="pill-row">
+            <span class="pill">Vapi</span>
+            <span class="pill">Retell AI</span>
+            <span class="pill">ElevenLabs</span>
+            <span class="pill">Twilio</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <span class="mono">Automation &amp; AI</span>
+          <div class="pill-row">
+            <span class="pill">n8n</span>
+            <span class="pill">OpenAI</span>
+            <span class="pill">Google Gemini</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <span class="mono">CRM &amp; Data</span>
+          <div class="pill-row">
+            <span class="pill">GoHighLevel</span>
+            <span class="pill">HubSpot</span>
+            <span class="pill">Zoho CRM</span>
+            <span class="pill">Google Sheets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORK ============ -->
+  <!-- EDIT ME: replace these three cards with your real projects whenever you're ready. -->
+  <section id="work">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="mono eyebrow">Selected work</span>
+        <h2>What these systems look like in practice</h2>
+        <p class="sub">A few examples of the kind of builds I take on.</p>
+      </div>
+      <div class="card-grid">
+        <div class="work-card reveal">
+          <span class="mono tag">Case 01</span>
+          <h3>Inbound voice agent for appointment booking</h3>
+          <p class="desc">A Vapi-based voice agent that answers calls, checks calendar availability, and books appointments directly &mdash; no human required for routine bookings.</p>
+          <div class="work-tags"><span>Vapi</span><span>Twilio</span><span>Google Calendar</span></div>
+        </div>
+        <div class="work-card reveal">
+          <span class="mono tag">Case 02</span>
+          <h3>Lead-to-CRM automation pipeline</h3>
+          <p class="desc">An n8n workflow that pulls new leads from forms and ad platforms, enriches them, and pushes clean records into the CRM &mdash; zero manual entry.</p>
+          <div class="work-tags"><span>n8n</span><span>HubSpot</span><span>Google Sheets</span></div>
+        </div>
+        <div class="work-card reveal">
+          <span class="mono tag">Case 03</span>
+          <h3>Multilingual outbound calling agent</h3>
+          <p class="desc">A Retell AI agent that switches languages mid-call based on the caller's response, used for outbound follow-up across regions.</p>
+          <div class="work-tags"><span>Retell AI</span><span>ElevenLabs</span><span>Twilio</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <!-- EDIT ME: swap the placeholder email / Fiverr / Upwork / LinkedIn links below for your real ones. -->
+  <section id="contact" class="section-alt">
+    <div class="container contact-box reveal">
+      <span class="mono eyebrow">Contact</span>
+      <h2>Have a process that needs to run itself?</h2>
+      <p class="sub">Tell me what's eating your time right now &mdash; calls, lead intake, follow-ups &mdash; and I'll tell you straight whether automation actually fixes it.</p>
+      <div class="contact-cta">
+        <a href="mailto:hello@yourdomain.com" class="btn btn-primary">Email me &rarr;</a>
+        <a href="#" class="btn btn-ghost">Book a call</a>
+      </div>
+      <div class="contact-links">
+        <a href="#" target="_blank" rel="noopener">Fiverr</a>
+        <a href="#" target="_blank" rel="noopener">Upwork</a>
+        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <p>&copy; <span id="year"></span> Abdul Rehman &mdash; Lahore, Pakistan</p>
+    <p>Built with n8n logic and too much coffee.</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // mobile nav toggle
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      var open = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        links.classList.remove('open');
+        toggle.setAttribute('aria-expanded','false');
+      });
+    });
+  }
+
+  // scroll-reveal, skipped entirely for reduced-motion users
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduceMotion && 'IntersectionObserver' in window){
+    document.body.classList.add('js-ready');
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+  }
+</script>
+
+</body>
+</html>
